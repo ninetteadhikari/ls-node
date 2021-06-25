@@ -1,0 +1,7 @@
+dist/
+.DS_Store
+prm
+report*
+sq
+tmp.js
+node_modules/
