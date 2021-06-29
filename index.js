@@ -6,21 +6,24 @@ const fileName = process.argv[3]
 async function main () {
   if (lsCommand === 'ls') {
     try {
-      const files = await fs.readdir('./')
-      for (let i = 0; i < files.length; i++) {
-        // Show matching file name or an error if file does not exist
-        if (fileName) {
-          if (files[i] === fileName) {
-            return console.log(files[i])
-          } else if (i === files.length - 1) {
-            console.log('File name does not exist')
-          }
-        } else {
-          console.log(files[i])
+      // List all files in the current directory
+      if (!fileName) {
+        const files = await fs.readdir('./')
+        for (const file of files) {
+          console.log(file)
         }
       }
+      // Show matching file name or an error if file does not exist
+      if (fileName) {
+        await fs.stat(`./${fileName}`)
+        console.log(fileName)
+      }
     } catch (err) {
-      console.error(err)
+      if (err.code === 'ENOENT') {
+        console.log('File or folder does not exist')
+      } else {
+        console.error(err)
+      }
     }
   } else {
     console.log('Usage: node index.js ls filename')
