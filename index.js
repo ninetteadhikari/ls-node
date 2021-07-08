@@ -3,15 +3,19 @@ const fs = require('fs').promises
 const lsCommand = process.argv[2]
 const fileNames = process.argv.slice(3)
 
+async function readFile (filePath) {
+  const files = await fs.readdir(filePath)
+  for (const file of files) {
+    console.log(file)
+  }
+}
+
 async function main () {
   if (lsCommand === 'ls') {
     try {
       // List all files in the current directory
       if (!fileNames.length) {
-        const files = await fs.readdir('./')
-        for (const file of files) {
-          console.log(file)
-        }
+        readFile('./')
       }
       // Show matching file name for multiple files or error message if file
       // does not exist
@@ -20,10 +24,7 @@ async function main () {
           const fileStat = await fs.stat(file)
           // List files inside a directory
           if (fileStat.isDirectory()) {
-            const dirFiles = await fs.readdir(file)
-            for (const file of dirFiles) {
-              console.log(file)
-            }
+            readFile(file)
           } else {
             console.log(file)
           }
