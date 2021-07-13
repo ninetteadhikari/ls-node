@@ -1,7 +1,8 @@
 const fs = require('fs').promises
 
-const lsCommand = process.argv[2]
-const fileNames = process.argv.slice(3)
+const command = process.argv[2]
+const fileNames = process.argv[3]
+// const fileNames = process.argv.slice(3)
 
 async function readFile (filePath) {
   const files = await fs.readdir(filePath)
@@ -11,7 +12,7 @@ async function readFile (filePath) {
 }
 
 async function main () {
-  if (lsCommand === 'ls') {
+  if (command === 'ls') {
     try {
       // List all files in the current directory
       if (!fileNames.length) {
@@ -36,6 +37,14 @@ async function main () {
       }
     } catch (err) {
       console.error(err)
+    }
+  } else if (command === 'cat') {
+    try {
+      // Read content of the file
+      const readFile = await fs.readFile(fileNames, 'utf8')
+      console.log(readFile)
+    } catch (err) {
+
     }
   } else {
     console.log('Usage: node index.js ls filename')
