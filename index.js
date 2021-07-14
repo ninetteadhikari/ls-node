@@ -2,8 +2,7 @@ const fs = require('fs')
 const fsp = fs.promises
 
 const command = process.argv[2]
-const fileNames = process.argv[3]
-// const fileNames = process.argv.slice(3)
+const fileNames = process.argv.slice(3)
 
 async function readFile (filePath) {
   const files = await fsp.readdir(filePath)
@@ -40,15 +39,17 @@ async function main () {
       console.error(err)
     }
   } else if (command === 'cat') {
-    // Stream content of large files in chunks
-    const readStream = fs.createReadStream(fileNames)
-    // Read file data
-    readStream.on('data', (chunk) => {
-      console.log(chunk.toString())
-    })
-    readStream.on('error', (err) => {
-      console.log(err)
-    })
+    for (const file of fileNames) {
+      // Stream content of large files in chunks
+      const readStream = fs.createReadStream(file)
+      // Read file data
+      readStream.on('data', (chunk) => {
+        console.log(chunk.toString())
+      })
+      readStream.on('error', (err) => {
+        console.log(err)
+      })
+    }
   } else {
     console.log('Usage: node index.js ls filename')
     console.log('Usage: node index.js cat filename')
