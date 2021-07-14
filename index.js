@@ -47,7 +47,11 @@ async function main () {
         console.log(chunk.toString())
       })
       readStream.on('error', (err) => {
-        console.log(err)
+        if (err.code === 'EISDIR') {
+          console.log(`${file} is a directory. Add a file to read.`)
+        } else {
+          console.log(err)
+        }
       })
     }
   } else {
