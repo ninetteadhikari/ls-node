@@ -1,11 +1,12 @@
-const fs = require('fs').promises
+const fs = require('fs')
+const fsp = fs.promises
 
 const command = process.argv[2]
 const fileNames = process.argv[3]
 // const fileNames = process.argv.slice(3)
 
 async function readFile (filePath) {
-  const files = await fs.readdir(filePath)
+  const files = await fsp.readdir(filePath)
   for (const file of files) {
     console.log(file)
   }
@@ -22,7 +23,7 @@ async function main () {
       // does not exist
       for (const file of fileNames) {
         try {
-          const fileStat = await fs.stat(file)
+          const fileStat = await fsp.stat(file)
           // List files inside a directory
           if (fileStat.isDirectory()) {
             readFile(file)
@@ -39,15 +40,18 @@ async function main () {
       console.error(err)
     }
   } else if (command === 'cat') {
-    try {
-      // Read content of the file
-      const readFile = await fs.readFile(fileNames, 'utf8')
-      console.log(readFile)
-    } catch (err) {
-
-    }
+    // Stream content of large files in chunks
+    const readStream = fs.createReadStream(fileNames)
+    // Read file data
+    readStream.on('data', (chunk) => {
+      console.log(chunk.toString())
+    })
+    readStream.on('error', (err) => {
+      console.log(err)
+    })
   } else {
     console.log('Usage: node index.js ls filename')
+    console.log('Usage: node index.js cat filename')
   }
 }
 
