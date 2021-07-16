@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+// The above shebang command is used to make the file executable using node
+
 const fs = require('fs')
 const fsp = fs.promises
 
