@@ -4,8 +4,11 @@
 const fs = require('fs')
 const fsp = fs.promises
 
-const command = process.argv[2]
-const fileNames = process.argv.slice(3)
+// The process.argv property returns the path of the command, for example: /Users/username/nls
+// So lastIndexOf and slice method can be used to extract the command
+const index = process.argv[1].lastIndexOf('/')
+const command = process.argv[1].slice(index + 1)
+const fileNames = process.argv.slice(2)
 
 async function readFile (filePath) {
   const files = await fsp.readdir(filePath)
@@ -15,7 +18,7 @@ async function readFile (filePath) {
 }
 
 async function main () {
-  if (command === 'ls') {
+  if (command === 'nls') {
     try {
       // List all files in the current directory
       if (!fileNames.length) {
@@ -41,7 +44,10 @@ async function main () {
     } catch (err) {
       console.error(err)
     }
-  } else if (command === 'cat') {
+  } else if (command === 'ncat') {
+    if (!fileNames.length) {
+      console.log('Please add file name')
+    }
     for (const file of fileNames) {
       // Stream content of large files in chunks
       const readStream = fs.createReadStream(file)
@@ -58,8 +64,8 @@ async function main () {
       })
     }
   } else {
-    console.log('Usage: node index.js ls filename')
-    console.log('Usage: node index.js cat filename')
+    console.log('Usage: nls filename')
+    console.log('Usage: ncat filename')
   }
 }
 
